@@ -5,13 +5,9 @@ const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
 const { sendUser } = require('./proto');
 
-const PROTO_PATH = path.join(__dirname, 'proto/serviceTwo.proto');
+const PROTO_PATH = path.join(__dirname, './proto/serviceTwo.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
+    keepCase: true, longs: String, enums: String, defaults: true, oneofs: true,
 });
 const userProto = grpc.loadPackageDefinition(packageDefinition).user;
 

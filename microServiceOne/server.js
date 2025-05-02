@@ -4,19 +4,15 @@ const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
 
-const PROTO_PATH = path.join(__dirname, 'proto/serviceOne.proto');
+const PROTO_PATH = path.join(__dirname, './proto/serviceOne.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
+    keepCase: true, longs: String, enums: String, defaults: true, oneofs: true,
 });
 const userProto = grpc.loadPackageDefinition(packageDefinition).user;
 
 const app = express();
 
-// app.use(express.json());
+app.use(express.json());
 app.use(bodyParser.json());
 
 const client = new userProto.UserService('localhost:50051', grpc.credentials.createInsecure());
@@ -31,6 +27,7 @@ function sendUserAsync(client, request) {
             if (err) {
                 reject(err);
             } else {
+                console.log('response in promise', response);
                 resolve(response);
             }
         });
@@ -38,15 +35,19 @@ function sendUserAsync(client, request) {
 }
 
 app.post('/send-user', async (req, res) => {
-    const request = { name: req.body.name, email: req.body.email };
-    console.log('Request:', request);
+    const { name, email } = req.body;
+    console.log('Request:', { name, email });
+
     try {
-        const response = await sendUserAsync(client, request);
-        console.log('Response:', response.message);
-        res.send(response);
+        const response = await sendUserAsync(client, { name, email });
+        console.log('Response:', response);
+        res.json({
+            message: response?.message || 'N/A',
+            data: response?.data || []
+        });
     } catch (err) {
         console.error('Error sending user:', err);
-        res.status(500).send(err);
+        res.status(500).json({ error: err.stack });
     }
 });
 
