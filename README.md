@@ -122,14 +122,14 @@ Response: { message: 'User received', data: '12345' }
 │   ├── package.json
 │   ├── server.js
 │   ├── proto/
-│   │   └── user.proto
+│   │   └── serviceOne.proto
 │   └── ...
 │
 ├── microServiceTwo/
 │   ├── package.json
 │   ├── server.js
 │   ├── proto/
-│   │   └── user.proto
+│   │   └── serviceTwo.proto
 │   └── ...
 │
 └── README.md
